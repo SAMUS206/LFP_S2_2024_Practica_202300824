@@ -23,12 +23,12 @@ program main
                 print *, "Cargando inventario inicial"
                 call cargar_inventario_inicial('inventario.inv', inventarioInicial)
                 print *, "Inventario cargado con éxito"
-                call imprimir_inventario(inventarioInicial)  ! Imprimir el inventario cargado
+                
             case(2)
                 print *, "Cargando instrucciones de movimientos"
             case(3)
                 print *, "Creando informe de inventario"
-        
+                call imprimir_inventario(inventarioInicial, 'reporte.txt')  ! Imprimir el inventario cargado
             case(4)
                 print *, "Saliendo del programa"
                 exit
