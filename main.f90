@@ -3,11 +3,12 @@ program main
     implicit none
 
     integer :: option
+    character(len=100) ::archivo
     type(inicial), allocatable :: inventarioInicial(:)
 
     do while (.true.)
         print *, "---------------------------------"
-        print *, "practice: lenguajes formales y de programacion"
+        print *, "practica: lenguajes formales y de programacion"
         print *, "---------------------------------"
         print *, "# Sistema de inventario"
         print *, ""
@@ -20,12 +21,16 @@ program main
         read *, option
         select case(option)
             case(1)
+                print *, "Ingrese el nombre del archivo: "
+                read *, archivo
                 print *, "Cargando inventario inicial"
-                call cargar_inventario_inicial('inventario.inv', inventarioInicial)
+                call cargar_inventario_inicial(archivo, inventarioInicial)
                 print *, "Inventario cargado con éxito"
-                
             case(2)
+                print *, "Ingrese el nombre del archivo: "
+                read *, archivo
                 print *, "Cargando instrucciones de movimientos"
+                call cargar_inventario_inicial(archivo, inventarioInicial)
             case(3)
                 print *, "Creando informe de inventario"
                 call imprimir_inventario(inventarioInicial, 'reporte.txt')  ! Imprimir el inventario cargado
