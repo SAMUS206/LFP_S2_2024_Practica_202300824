@@ -68,11 +68,11 @@ module inventario
             end if
             if (instruccion == 'agregar_stock')then
                 print*, instruccion, resto
-                call agregar_stock(resto, inventarioInicial(i))
+                call agregar_stock(resto, inventarioInicial)
             end if
             if(instruccion == 'eliminar_equipo')then
                 print*, instruccion, resto
-                call eliminar_equipo(resto, inventarioInicial(i))
+                call eliminar_equipo(resto, inventarioInicial)
             end if
         end do
     
@@ -81,7 +81,7 @@ module inventario
 
     subroutine procesar_linea(linea, equipo)
         character(len=100) :: linea
-        type(inicial) :: equipo
+        type(inicial), intent(inout) :: equipo
         character(len=50) :: nombre, ubicacion
         character(len=20) :: s_cantidad, s_precio_unitario
         integer :: i_delim1, i_delim2, i_delim3, cantidad
@@ -114,13 +114,12 @@ module inventario
         
     end subroutine procesar_linea
 
-    subroutine agregar_stock(linea, equipo)
+    subroutine agregar_stock(linea, inventarioInicial)
         character(len=100) :: linea
-        type(inicial), intent(inout) :: equipo
+        type(inicial), intent(inout) :: inventarioInicial(:)
         character(len=50) :: nombre, ubicacion
         character(len=20) :: s_cantidad
-        integer :: i_delim1, i_delim2, cantidad
-    
+        integer :: i_delim1, i_delim2, cantidad, i
     
         ! Encontrar las posiciones de los delimitadores
         print*, 'aqui empieza la subrutina'
@@ -140,25 +139,32 @@ module inventario
         ! Convertir cantidad al tipo correcto
         read(s_cantidad, *) cantidad
     
-        if (trim(nombre) == trim(equipo%nombre)) then
-            if (trim(ubicacion) == trim(equipo%ubicacion)) then
-                equipo%cantidad = equipo%cantidad + cantidad
-                equipo%precio_total = equipo%cantidad * equipo%precio_unitario
+        ! Buscar el equipo correcto en el inventario
+        do i = 1, size(inventarioInicial)
+            if (trim(nombre) == trim(inventarioInicial(i)%nombre) .and. &
+                trim(ubicacion) == trim(inventarioInicial(i)%ubicacion)) then
+                
+                ! Actualizar la cantidad y el precio total
+                inventarioInicial(i)%cantidad = inventarioInicial(i)%cantidad + cantidad
+                inventarioInicial(i)%precio_total = inventarioInicial(i)%cantidad * inventarioInicial(i)%precio_unitario
                 
                 ! Imprimir el resultado de los cambios
                 print *, "Agregado al equipo:", trim(nombre)
-                print *, "Nueva cantidad:", equipo%cantidad
-                print *, "Nuevo precio total:", equipo%precio_total
+                print *, "Nueva cantidad:", inventarioInicial(i)%cantidad
+                print *, "Nuevo precio total:", inventarioInicial(i)%precio_total
+                return
             end if
-        end if
-    end subroutine agregar_stock
+        end do
     
-    subroutine eliminar_equipo(linea, equipo)
+        ! Si no se encuentra el equipo
+        print *, "Error: Equipo no encontrado para agregar stock."
+    end subroutine agregar_stock
+    subroutine eliminar_equipo(linea, inventarioInicial)
         character(len=100) :: linea
-        type(inicial), intent(inout) :: equipo
+        type(inicial), intent(inout) :: inventarioInicial(:)
         character(len=50) :: nombre, ubicacion
         character(len=20) :: s_cantidad
-        integer :: i_delim1, i_delim2, cantidad
+        integer :: i_delim1, i_delim2, cantidad, i
     
         ! Encontrar las posiciones de los delimitadores
         print*, 'aqui empieza la subrutina'
@@ -178,22 +184,31 @@ module inventario
         ! Convertir cantidad al tipo correcto
         read(s_cantidad, *) cantidad
     
-        if (trim(nombre) == trim(equipo%nombre)) then
-            if (trim(ubicacion) == trim(equipo%ubicacion)) then
-                if (equipo%cantidad >= cantidad) then
-                    equipo%cantidad = equipo%cantidad - cantidad
-                    equipo%precio_total = equipo%cantidad * equipo%precio_unitario
-                    
+        ! Buscar el equipo correcto en el inventario
+        do i = 1, size(inventarioInicial)
+            if (trim(nombre) == trim(inventarioInicial(i)%nombre) .and. &
+                trim(ubicacion) == trim(inventarioInicial(i)%ubicacion)) then
+    
+                ! Verificar si hay suficiente cantidad para eliminar
+                if (inventarioInicial(i)%cantidad >= cantidad) then
+                    inventarioInicial(i)%cantidad = inventarioInicial(i)%cantidad - cantidad
+                    inventarioInicial(i)%precio_total = inventarioInicial(i)%cantidad * inventarioInicial(i)%precio_unitario
+    
                     ! Imprimir el resultado de los cambios
                     print *, "Eliminado del equipo:", trim(nombre)
-                    print *, "Nueva cantidad:", equipo%cantidad
-                    print *, "Nuevo precio total:", equipo%precio_total
+                    print *, "Nueva cantidad:", inventarioInicial(i)%cantidad
+                    print *, "Nuevo precio total:", inventarioInicial(i)%precio_total
                 else
                     print *, "Error: No hay suficiente cantidad para eliminar."
                 end if
+                return
             end if
-        end if
+        end do
+    
+        ! Si no se encuentra el equipo
+        print *, "Error: Equipo no encontrado para eliminar."
     end subroutine eliminar_equipo
+    
     
     subroutine imprimir_inventario(inventarioInicial, nombre_archivo)
         type(inicial), intent(in) :: inventarioInicial(:)
