@@ -64,7 +64,7 @@ module inventario
             ! Procesar el resto de la línea como un equipo
             if (instruccion == 'crear_equipo')then
                 print*, instruccion
-                call procesar_linea(resto, inventarioInicial(i))
+                call procesar_linea(resto, inventarioInicial)
             end if
             if (instruccion == 'agregar_stock')then
                 print*, instruccion, resto
@@ -79,9 +79,9 @@ module inventario
         close(10)
     end subroutine cargar_inventario_inicial
 
-    subroutine procesar_linea(linea, equipo)
+    subroutine procesar_linea(linea, inventarioInicial)
         character(len=100) :: linea
-        type(inicial), intent(inout) :: equipo
+        type(inicial), allocatable, intent(inout) :: inventarioInicial(:)
         character(len=50) :: nombre, ubicacion
         character(len=20) :: s_cantidad, s_precio_unitario
         integer :: i_delim1, i_delim2, i_delim3, cantidad
@@ -104,19 +104,19 @@ module inventario
         
 
         ! Asignar valores al equipo
-        equipo%nombre = trim(nombre)
-        equipo%cantidad = cantidad
-        equipo%precio_unitario = precio_unitario
-        equipo%ubicacion = trim(ubicacion)
+        inventarioInicial%nombre = trim(nombre)
+        inventarioInicial%cantidad = cantidad
+        inventarioInicial%precio_unitario = precio_unitario
+        inventarioInicial%ubicacion = trim(ubicacion)
         ! Calcular el precio total
         precio_total = cantidad * precio_unitario
-        equipo%precio_total = precio_total
+        inventarioInicial%precio_total = precio_total
         
     end subroutine procesar_linea
 
     subroutine agregar_stock(linea, inventarioInicial)
         character(len=100) :: linea
-        type(inicial), intent(inout) :: inventarioInicial(:)
+        type(inicial), allocatable, intent(inout) :: inventarioInicial(:)
         character(len=50) :: nombre, ubicacion
         character(len=20) :: s_cantidad
         integer :: i_delim1, i_delim2, cantidad, i
@@ -159,9 +159,10 @@ module inventario
         ! Si no se encuentra el equipo
         print *, "Error: Equipo no encontrado para agregar stock."
     end subroutine agregar_stock
+
     subroutine eliminar_equipo(linea, inventarioInicial)
         character(len=100) :: linea
-        type(inicial), intent(inout) :: inventarioInicial(:)
+        type(inicial), allocatable, intent(inout) :: inventarioInicial(:)
         character(len=50) :: nombre, ubicacion
         character(len=20) :: s_cantidad
         integer :: i_delim1, i_delim2, cantidad, i
