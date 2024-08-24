@@ -27,12 +27,12 @@ program main
                 read *, archivo
                 print *, "Cargando inventario inicial"
                 call cargar_y_procesar_inventario(archivo, inventarioInicial)
-                print *, "Inventario cargado con éxito"
+                print *, "Inventario cargado con exito"
             case(2)
                 print *, "Ingrese el nombre del archivo: "
                 read *, archivo
                 print *, "Cargando instrucciones de movimientos"
-                call cargar_movimientos(archivo, movimientos)
+                call cargar_movimientos(archivo, movimientos, inventarioInicial)
             case(3)
                 print *, "Creando informe de inventario"
                 call imprimir_inventario(inventarioInicial, 'reporte.txt')  ! Imprimir el inventario cargado
