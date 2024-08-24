@@ -5,6 +5,8 @@ program main
     integer :: option
     character(len=100) ::archivo
     type(inicial), allocatable :: inventarioInicial(:)
+    type(movimiento), allocatable :: movimientos(:)
+    
 
     do while (.true.)
         print *, "---------------------------------"
@@ -24,13 +26,13 @@ program main
                 print *, "Ingrese el nombre del archivo: "
                 read *, archivo
                 print *, "Cargando inventario inicial"
-                call cargar_inventario_inicial(archivo, inventarioInicial)
+                call cargar_y_procesar_inventario(archivo, inventarioInicial)
                 print *, "Inventario cargado con éxito"
             case(2)
                 print *, "Ingrese el nombre del archivo: "
                 read *, archivo
                 print *, "Cargando instrucciones de movimientos"
-                call cargar_inventario_inicial(archivo, inventarioInicial)
+                call cargar_movimientos(archivo, movimientos)
             case(3)
                 print *, "Creando informe de inventario"
                 call imprimir_inventario(inventarioInicial, 'reporte.txt')  ! Imprimir el inventario cargado
